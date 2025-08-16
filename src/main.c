@@ -45,7 +45,12 @@ int main(void) {
             kb_Scan();
             usb_HandleEvents();
 
-            os_PutStrFull("Macropad initiated.");
+            if (kb_Data[1] == kb_2nd) {
+                hidKbInputReport.keycodes[0] = 0x04;
+                os_PutStrFull("Button pressed.");
+            } else {
+                hidKbInputReport.keycodes[0] = 0x0;
+            }
 
             usb_InterruptTransfer(
                 usb_GetDeviceEndpoint(

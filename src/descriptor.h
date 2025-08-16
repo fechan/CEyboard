@@ -35,11 +35,37 @@ static usb_string_descriptor_t serial = {
 
 static const usb_string_descriptor_t *strings[] = { &product_name, &manufacturer, &serial };
 static const usb_string_descriptor_t langids = {
-    .bLength = sizeof(langids),
+    // .bLength = sizeof(langids),
+    .bLength = 4,
     .bDescriptorType = USB_STRING_DESCRIPTOR,
     .bString = {
         [0] = DEFAULT_LANG_ID,
     },
+};
+
+static uint8_t report_descriptor[] = {
+    0x05, 0x01, //Usage Page (Generic Desktop)
+    0x09, 0x06, //Usage (Keyboard)
+    0xA1, 0x01, //Collection (Application)
+    0x05, 0x07, //  Usage Page (Key Codes)
+    0x19, 0xE0, //  Usage Minimum (E0)
+    0x29, 0xE7, //  Usage Minimum (E7)
+    0x15, 0x00, //  Logical Minimum (0)
+    0x25, 0x01, //  Logical Maximum (1)
+    0x75, 0x01, //  Report Size (1)
+    0x95, 0x08, //  Report Count (8) 
+    0x81, 0x02, //  Input (Data, Variable, Absolute), ;Modifier byte 
+    0x95, 0x01, //  Report Count (1), 
+    0x75, 0x08, //  Report Size (8), 
+    0x81, 0x01, //  Input (Constant), ;Reserved byte 
+    0x95, 0x06, //  Report Count (6), 
+    0x75, 0x08, //  Report Size (8), 
+    0x15, 0x00, //  Logical Minimum (0), 
+    0x25, 0x65, //  Logical Maximum(101), 
+    0x19, 0x00, //  Usage Minimum (0), 
+    0x29, 0x65, //  Usage Maximum (101), 
+    0x81, 0x00, //  Input (Data, Array), ;Key arrays (6 bytes)
+    0xC0,       //End Collection
 };
 
 static struct {
@@ -77,7 +103,7 @@ static struct {
         .bCountryCode = 0, // Not supported
         .bNumDescriptors = 1,
         .bReportDescriptorType = USB_HID_REPORT_DESCRIPTOR,
-        .wDescriptorLength = sizeof(configuration.report_descriptor),
+        .wDescriptorLength = sizeof(report_descriptor),
     },
     .endpoint = {
         .bLength = sizeof(configuration.endpoint),
@@ -87,30 +113,7 @@ static struct {
         .wMaxPacketSize = sizeof(hid_kb_input_report_t),
         .bInterval = 10, // 10ms polling interval
     },
-    .report_descriptor = (uint8_t[]){
-        0x05, 0x01, //Usage Page (Generic Desktop)
-        0x09, 0x06, //Usage (Keyboard)
-        0xA1, 0x01, //Collection (Application)
-        0x05, 0x07, //  Usage Page (Key Codes)
-        0x19, 0xE0, //  Usage Minimum (E0)
-        0x29, 0xE7, //  Usage Minimum (E7)
-        0x15, 0x00, //  Logical Minimum (0)
-        0x25, 0x01, //  Logical Maximum (1)
-        0x75, 0x01, //  Report Size (1)
-        0x95, 0x08, //  Report Count (8) 
-        0x81, 0x02, //  Input (Data, Variable, Absolute), ;Modifier byte 
-        0x95, 0x01, //  Report Count (1), 
-        0x75, 0x08, //  Report Size (8), 
-        0x81, 0x01, //  Input (Constant), ;Reserved byte 
-        0x95, 0x06, //  Report Count (6), 
-        0x75, 0x08, //  Report Size (8), 
-        0x15, 0x00, //  Logical Minimum (0), 
-        0x25, 0x65, //  Logical Maximum(101), 
-        0x19, 0x00, //  Usage Minimum (0), 
-        0x29, 0x65, //  Usage Maximum (101), 
-        0x81, 0x00, //  Input (Data, Array), ;Key arrays (6 bytes)
-        0xC0,       //End Collection
-    },
+    .report_descriptor = report_descriptor,
 };
 
 static const usb_configuration_descriptor_t *configurations[] = {
